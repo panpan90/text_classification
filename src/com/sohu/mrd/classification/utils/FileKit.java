@@ -24,11 +24,6 @@ public class FileKit {
 	public static List<String> filePath = new ArrayList<String>();
 
 	public static void main(String[] args) {
-		File file = new File("data/test_delete");
-		if (file.exists()) {
-			file.delete();
-			LOG.info("删除文件成功");
-		}
 	}
 
 	/**
@@ -182,7 +177,6 @@ public class FileKit {
 			}
 		}
 	}
-
 	/**
 	 * 是否追加写入文件
 	 * 
@@ -194,7 +188,10 @@ public class FileKit {
 		FileOutputStream fos = null;
 		try {
 			fos = new FileOutputStream(path, isAppend);
-			fos.write(s.getBytes());
+			StringBuilder sb = new StringBuilder();
+			sb.append(s);
+			sb.append("\n");
+			fos.write(sb.toString().getBytes());
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

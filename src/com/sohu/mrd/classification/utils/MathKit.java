@@ -17,9 +17,20 @@ public class MathKit {
 		return Math.log(value) / Math.log(base);
 	}
 
+	public static boolean isNumeric(String str){  
+		  if(null==str || str.trim().equals(""))
+		  {
+			  return false;
+		  }
+		  for (int i = str.length();--i>=0;){    
+		   if (!Character.isDigit(str.charAt(i))){  
+		    return false;  
+		   }  
+		  }  
+		  return true;  
+		}
 	public static void main(String[] args) {
-		double base = 1.0 + 0.1;
-		double value = 1.1;
-		System.out.println(getLog(base, value));
+		boolean is=isNumeric("10");
+		System.out.println(is);
 	}
 }

@@ -1,13 +1,12 @@
 package com.sohu.mrd.classification.utils;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.junit.Test;
-
 public class KillPuctuation {
+	//  去除标点符号  [,|。|，|!|！|?|？|、]
 	public static String killPuctuation(String sentence)
 	{
 		Pattern patterncomma = Pattern.compile("(&[^;]+;)", Pattern.DOTALL);
