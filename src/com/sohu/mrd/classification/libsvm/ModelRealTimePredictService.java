@@ -17,14 +17,19 @@ public class ModelRealTimePredictService {
     {
     	 return InstanceHolder.modelRealTimePredictService;
     }
-    public  String  filterByModel(News news)
+    public  String  filterByModel(News news,String sexyModelPath,String adsModelPath)
     {
     	String filterReason=null;
     	String title=news.getTitle();
     	String content=news.getContent();
-    	//根据模型进行判断
-        	
-    	
+    	//根据色情模型进行判断
+       // WekaSVM.predictOnlineSigle(sexyModelPath, GenerateSigleInstance.generateSigleInstance(news.getContent()));
+    	//根据广告模型进行判断
+       Double result=WekaSVM.predictOnlineSigle(adsModelPath, GenerateSigleInstance.generateSigleInstance(news.getContent()));
+       if(result==1.0)
+       {
+    	   filterReason="根据广告模型被过滤";
+       }
          return    filterReason; 	
     }
 }

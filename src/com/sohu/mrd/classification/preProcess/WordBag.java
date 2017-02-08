@@ -50,7 +50,7 @@ public class WordBag {
 		//wordBag.generateWordBag(TRAIN_PATH, wordBagPath);
 		//wordBag.generateWordCount(TRAIN_PATH, wordCountPath);
 		//wordBag.generateWordCount(sexy_content_path, sexy_wordCount_path);
-		wordBag.generateWordCount(ordernaryYuliao, ordernaryYuliao_wordCount_path);
+		wordBag.generateWordCount("data/online_ads/ordernary_test", "data/online_ads/ordernary_count");
 	}
 	public  void   generateWordBag(String inputPath,String outputPath)
 	{

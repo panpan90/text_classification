@@ -7,14 +7,23 @@ import java.util.List;
    @creation 2017年1月16日
  */
 public class News {
-	private  String url;
-	private  String title;
-	private  String content;
-	private  String sort;
-	private  String imageCount;//图片个数
-	private  String media;//媒体类型
+	private  String url="";
+	private  String title="";
+	private  String content="";
+	private  String sort="";
+	private  String imageCount="0";//图片个数
+	private  String media="";//媒体类型
 	private  List<String> keyWords;
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "News [url=" + url + ", title=" + title 
+				+ ", sort=" + sort + ", imageCount=" + imageCount + ", media="
+				+ media + ", keyWords=" + keyWords + "]";
+	}
 	/**
 	 * @return the imageCount
 	 */

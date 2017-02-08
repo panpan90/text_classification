@@ -24,13 +24,13 @@ public class JunkInformationProcessService {
 			return judgeInfo;
 		}
 		ModelRealTimePredictService  modelRealTimePredictService=ModelRealTimePredictService.getInstance();
-		String  modelFilterReason=modelRealTimePredictService.filterByModel(news);
-		if(modelFilterReason!=null) //根据模型
-		{
-			judgeInfo.setReason("bad");
-			judgeInfo.setReason(modelFilterReason);
-			return judgeInfo;
-		}
+		//String  modelFilterReason=modelRealTimePredictService.filterByModel(news,"sexyModelPath","adsModelPath");
+//		if(modelFilterReason!=null) //根据模型
+//		{
+//			judgeInfo.setReason("bad");
+//			judgeInfo.setReason(modelFilterReason);
+//			return judgeInfo;
+//		}
 		return judgeInfo;
 	}
 }

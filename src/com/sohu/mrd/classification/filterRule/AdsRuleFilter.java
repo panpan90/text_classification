@@ -10,6 +10,8 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import com.sohu.mrd.classification.bean.News;
+import com.sohu.mrd.classification.utils.KillPuctuation;
+import com.sohu.mrd.classification.utils.KillTag;
 import com.sohu.mrd.classification.utils.MathKit;
 import com.sohu.mrd.classification.utils.SegmentKit;
 /**
@@ -30,7 +32,7 @@ public class AdsRuleFilter {
 				adsList.add(temp);
 			}
 		} catch (IOException e) {
-			LOG.error("读取色情词汇异常 ",e);
+			LOG.error("读取广告词汇异常 ",e);
 		}
 	}
 	private AdsRuleFilter() {
@@ -67,8 +69,8 @@ public class AdsRuleFilter {
 			}
 		}
 		// 文章图片小于4，且文章长度小于100过滤
-		if (imageCount < 4 && news.getContent().length() < 100) {
-			ruleFilterReason = "文章图片小于4且正文小于100被过滤 ，文章图片个数为 " + imageCount
+		if (imageCount < 4 && news.getContent().length() < 50) {
+			ruleFilterReason = "文章图片小于4且正文小于50被过滤 ，文章图片个数为 " + imageCount
 					+ " 文章正文长度为" + news.getContent().length();
 			return ruleFilterReason;
 		}
@@ -83,7 +85,7 @@ public class AdsRuleFilter {
 			return ruleFilterReason;
 		}
 		//过滤手机号，邮箱 ，qq
-		String phoneFilter=filterByAds(news);
+		String phoneFilter=filterByPhoneEtc(news);
 		if(phoneFilter!=null)
 		{
 			ruleFilterReason=phoneFilter;
@@ -98,6 +100,8 @@ public class AdsRuleFilter {
 	private String   filterByPhoneEtc(News news)
 	{
 		String content=news.getContent();
+		//去除内容中的标签
+		content=(KillTag.killTags(content));
 		String filterReason = null;
 		HashMap<String, String> map = new HashMap<String, String>();
 		map.put("零", "0");

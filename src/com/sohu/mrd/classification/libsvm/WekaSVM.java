@@ -67,8 +67,12 @@ public class WekaSVM {
 	 * @param libSVM
 	 * @param trainInstances
 	 */
-	public static void crossPredict(String modelPath ,Instances trainInstances) {
+	public static void crossPredict(String modelPath ,String trainArffPath) {
 		try {
+			ArffLoader arffLoader = new ArffLoader();
+			arffLoader.setSource(new File(trainArffPath));
+			Instances trainInstances = arffLoader.getDataSet();
+			trainInstances.setClassIndex(trainInstances.numAttributes() - 1);// 设置class所在的列
 			LibSVM  libsvm=loadModelBykit(modelPath);
 			Evaluation eva = new Evaluation(trainInstances);
 			eva.crossValidateModel(libsvm, trainInstances, 10, new Random());
@@ -97,14 +101,14 @@ public class WekaSVM {
 			for(int i=0;i<testNumber;i++)
 			{
 				double predictResult=libsvm.classifyInstance(testInstances.instance(i));
-				double realResult=testInstances.instance(i).classValue();
+				double realResult=new Double(testInstances.instance(i).stringValue(testInstances.classIndex()));
 				if(predictResult==realResult&&predictResult==1) // 默认1 代表色情和广告，代表的是正样本
 				{
 					//如果预测结果和测试集的结果相同且预测为色情
 					posRightCount++;
 				}
 				//本来正样本的个数
-				if(testInstances.instance(i).classValue()==1)
+				if(realResult==1)
 				{
 					posCount++;
 				}
@@ -115,7 +119,7 @@ public class WekaSVM {
 			double precise=(double)posRightCount/testNumber;//准确率
 			double recall=(double)posRightCount/posCount;//召回率
 			double F1=2*precise*recall/(precise+recall);//F1值
-		    LOG.info("被分类为1的个数 posRightCount "+posRightCount);
+		    LOG.info("被分类为1的个数 posRightCount 即预测正确的结果为 "+posRightCount);
 		    LOG.info("测试集中1的总个数posCount "+posCount);
 			LOG.info("准确率 precise "+precise);
 			LOG.info("召回率 recall "+recall);

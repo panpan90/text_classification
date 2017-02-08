@@ -21,7 +21,7 @@ import com.sohu.mrd.classification.utils.MathKit;
  */
 public class OddsRatio {
 	public static final Logger LOG = Logger.getLogger(OddsRatio.class);
-	public static final String  FEATURE_SELECT_PATH="data/feature_select";
+	public static final String  FEATURE_SELECT_PATH="data/online_ads/feature_select";
 	public static HashMap<String, Integer> sexy_count = new HashMap<String, Integer>();
 	public static HashMap<String, Integer> ordernary_count = new HashMap<String, Integer>();
 	public static HashMap<String,Double>   odds_map = new HashMap<String,Double>();
@@ -30,9 +30,9 @@ public class OddsRatio {
 	static {
 		try {
 			FileInputStream sexy_fis = new FileInputStream(
-					"data/sexy_wordcount");
+					"data/online_ads/ads_count");
 			FileInputStream ordernary_fis = new FileInputStream(
-					"data/ordernary_wordcount");
+					"data/online_ads/ordernary_count");
 			BufferedReader sex_br = new BufferedReader(new InputStreamReader(
 					sexy_fis));
 			String sexy_temp = "";
@@ -129,6 +129,7 @@ public class OddsRatio {
 			if(radio>0)
 			{
 				FileKit.write2File(word, FEATURE_SELECT_PATH);
+			    count++;
 			}
 		}
 		

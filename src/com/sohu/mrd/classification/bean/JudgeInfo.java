@@ -30,5 +30,12 @@ public class JudgeInfo{
 	public void setReason(String reason) {
 		this.reason = reason;
 	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "JudgeInfo [status=" + status + ", reason=" + reason + "]";
+	}
 	
 }

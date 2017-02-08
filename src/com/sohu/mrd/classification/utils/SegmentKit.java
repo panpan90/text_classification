@@ -5,10 +5,14 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+
 import org.ansj.domain.Result;
 import org.ansj.domain.Term;
 import org.ansj.splitWord.analysis.NlpAnalysis;
 import org.ansj.splitWord.analysis.ToAnalysis;
+import org.apache.hive.com.esotericsoftware.minlog.Log;
+import org.apache.log4j.Logger;
+
 import com.sohu.mrd.classification.constant.Constant;
 import com.sohu.mrd.classification.preProcess.WordBag;
 /**
@@ -16,6 +20,7 @@ import com.sohu.mrd.classification.preProcess.WordBag;
  * @creation 2016年12月8日 分词的帮助类
  */
 public class SegmentKit{
+	private static  Logger LOG = Logger.getLogger(SegmentKit.class);
 	private  static List<String> stopWords = new ArrayList<String>();
 	static {
 		InputStream is = WordBag.class.getClassLoader().getResourceAsStream(
