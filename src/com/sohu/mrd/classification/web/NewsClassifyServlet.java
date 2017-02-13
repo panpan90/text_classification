@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 import com.alibaba.fastjson.JSONObject;
 import com.sohu.mrd.classification.bean.JudgeInfo;
 import com.sohu.mrd.classification.bean.News;
+import com.sohu.mrd.classification.redis.RedisCrud;
 import com.sohu.mrd.classification.service.JunkInformationProcessService;
 /**
  * @author Jin Guopan
@@ -19,33 +20,54 @@ import com.sohu.mrd.classification.service.JunkInformationProcessService;
  */
 public class NewsClassifyServlet extends HttpServlet {
 	private static Logger LOG =Logger.getLogger(NewsClassifyServlet.class);
+	private static final  String REDIS_PREFIX="final2_sohu_com_classification_filter_cach_";
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		   this.doPost(request, response);
 	}
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		    String title=request.getParameter("title");
 		    String url=request.getParameter("url");
-		    String content=request.getParameter("content");
-		    String sort=request.getParameter("sort");
-		    String imageCount=request.getParameter("imageCount");
-		    String media=request.getParameter("media");
-		    News news= new News();
-		    news.setContent(content);
-		    news.setImageCount(imageCount);
-		    news.setMedia(media);
-		    news.setUrl(url);
-		    news.setSort(sort); 
-		    news.setTitle(title);
-		    LOG.info("接口获取数据  "+news);
-		    JunkInformationProcessService junkInformationProcessService = new JunkInformationProcessService();
-		    JudgeInfo  judgeInfo= junkInformationProcessService.getJudgeInfo(news);
-		    JSONObject result = new JSONObject();
-		    result.put("status", judgeInfo.getStatus());
-		    result.put("reason", judgeInfo.getReason());
-		    write2Client(result.toJSONString(), response);
-		    LOG.info("返回的值为 "+result+" url "+url+" title "+title);
+		    String title=request.getParameter("title");
+		    //判断缓存中是否存在
+		    String cachResult=RedisCrud.get(REDIS_PREFIX+url);
+		    if(cachResult==null)//缓存不存在
+		    {
+				    String content=request.getParameter("content");
+				    String sort=request.getParameter("sort");
+				    String imageCount=request.getParameter("imageCount");
+				    String media=request.getParameter("media");
+				    News news= new News();
+				    news.setContent(content);
+				    news.setImageCount(imageCount);
+				    news.setMedia(media);
+				    news.setUrl(url);
+				    news.setSort(sort); 
+				    news.setTitle(title);
+				    LOG.info("接口获取数据  "+news);
+				    long startTime=System.currentTimeMillis();
+				    JunkInformationProcessService junkInformationProcessService = new JunkInformationProcessService();
+				    JudgeInfo  judgeInfo= junkInformationProcessService.getJudgeInfo(news);
+				    long endTime=System.currentTimeMillis();
+				    long filterTime=endTime-startTime;
+				    LOG.info("filterTime  "+filterTime);
+				    if(filterTime > 6000)
+				    {
+				    	LOG.info("过滤时间超过6s " +filterTime +" url "+url);
+				    }
+				    	JSONObject result = new JSONObject();
+					    result.put("status", judgeInfo.getStatus());
+					    result.put("reason", judgeInfo.getReason());
+					    result.put("url", url);
+					    result.put("title", title);
+					    write2Client(result.toJSONString(), response);
+					    RedisCrud.set(REDIS_PREFIX+url, result.toJSONString());//把结果写入redis缓存
+					    LOG.info("返回的值为 "+result+" url "+url+" title "+title);
+		    }else{
+		    	//返回缓存的结果
+		    	 write2Client(cachResult, response);
+		    	 LOG.info("从缓存中获取返回的值为 "+cachResult+" url "+url+" title "+title);
+		    }
 	}
 	/**
 	 * 向前端写入数据

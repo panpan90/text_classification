@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -23,7 +24,7 @@ public class AdsRuleFilter {
 	private static List<String> adsList = new ArrayList<String>();
 	static{
 		InputStream adsIs = AdsRuleFilter.class.getClassLoader()
-				.getResourceAsStream("dic/ads.txt");
+				.getResourceAsStream("filter_dic/ads_2");
 		BufferedReader br = new BufferedReader(new InputStreamReader(adsIs));
 		String temp="";
 		try {
@@ -59,7 +60,11 @@ public class AdsRuleFilter {
 				&& MathKit.isNumeric(imageCountStr)) {
 			imageCount = Integer.valueOf(imageCountStr);
 		}
+		long  startTimeSegment=System.currentTimeMillis();
 		List<String> titleSegment = SegmentKit.segmentSentence(news.getTitle());
+		long  endTimeSegment=System.currentTimeMillis();
+		//LOG.info("分词所耗时间  "+(endTimeSegment-startTimeSegment));
+		long startTimeTitle=System.currentTimeMillis();
 		for(int i=0;i<titleSegment.size();i++)
 		{
 			if(adsList.contains(titleSegment.get(i)))
@@ -68,6 +73,8 @@ public class AdsRuleFilter {
 				return ruleFilterReason;
 			}
 		}
+		long endTimeTitle=System.currentTimeMillis();
+		//LOG.info("标题过滤含有的时间  "+(endTimeTitle-startTimeTitle));
 		// 文章图片小于4，且文章长度小于100过滤
 		if (imageCount < 4 && news.getContent().length() < 50) {
 			ruleFilterReason = "文章图片小于4且正文小于50被过滤 ，文章图片个数为 " + imageCount
@@ -82,6 +89,28 @@ public class AdsRuleFilter {
 		 //标题里包含**元，过滤
 		if (news.getTitle().matches(".*\\d+元.*")) {
 			ruleFilterReason = "标题包含价格被过滤,标题为  " + news.getTitle();
+			return ruleFilterReason;
+		}
+		//正文中包含的广告词汇
+		long startTimeContent=System.currentTimeMillis();
+		//content=KillPuctuation.killPuctuation(KillTag.killTags(content));
+		//LOG.info("进行分词的内容  "+content);
+		//LOG.info("内容的长度 "+content.length());
+		List<String>  words=SegmentKit.article2List(content);
+		long endTimeContent=System.currentTimeMillis();
+		//LOG.info("内容分词的时间 "+(endTimeContent-startTimeContent));
+		HashSet<String> adsSet =new  HashSet<String>(); 
+		for(int k=0;k<words.size();k++)
+		{
+			if(adsList.contains(words.get(k)))
+			{
+				adsSet.add(words.get(k));
+			}
+		}
+		if(adsSet.size()>=3)
+		{
+			String sexyWord=adsSet.toString();
+			ruleFilterReason="正文中含有的广告词汇个数为 "+adsSet.size()+" 含有的广告词为 "+sexyWord;
 			return ruleFilterReason;
 		}
 		//过滤手机号，邮箱 ，qq
@@ -148,13 +177,13 @@ public class AdsRuleFilter {
 				filterReason = "通过手机号码被过滤，包含手机号码的句子是  " + ss[i];
 				 return filterReason;
 			}
-			if (ss[i].matches(qqKeywordsReg)) // 包含qq关键字
-			{
-				if (ss[i].matches(qq_reg)){
-					filterReason = "通过qq号码被过滤，包含qq号码的句子是  " + ss[i];
-					return filterReason;
-				}
-			}
+//			if (ss[i].matches(qqKeywordsReg)) // 包含qq关键字
+//			{
+//				if (ss[i].matches(qq_reg)){
+//					filterReason = "通过qq号码被过滤，包含qq号码的句子是  " + ss[i];
+//					return filterReason;
+//				}
+//			}
 			if (ss[i].matches(phonekeywordsReg)) // 包含固话的关键字
 			{
                 if(ss[i].matches(phone_reg1) || ss[i].matches(phone_reg2) || ss[i].matches(phone_reg3))

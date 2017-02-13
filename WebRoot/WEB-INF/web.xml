@@ -3,7 +3,7 @@
 	<!-- 配置过滤器 -->
 <filter>
     <filter-name>ecodingFilter</filter-name>
-    <filter-class>com.sohu.mrd.videoDocId.filter.EncodeFileter</filter-class>
+    <filter-class>com.sohu.mrd.classification.filter.EncodeFileter</filter-class>
     <init-param>
         <param-name>ecoding</param-name>
         <param-value>UTF-8</param-value>

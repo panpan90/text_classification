@@ -4,8 +4,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+
 import org.apache.log4j.Logger;
+
 import com.sohu.mrd.classification.bean.News;
 import com.sohu.mrd.classification.utils.SegmentKit;
 /**
@@ -53,20 +56,18 @@ public class SexyRuleFilter {
 			}
 		}
 		List<String>  words=SegmentKit.article2List(content);
-		StringBuilder sexySb=new StringBuilder();
-		int countSexy=0;
+		HashSet<String> sexySet=new HashSet<String>();
 		for(int i=0;i<words.size();i++)
 		{
 			if(sexyList.contains(words.get(i)))
 			{
-				countSexy++;
-				sexySb.append(words.get(i));
-				sexySb.append(",");
+				sexySet.add(words.get(i));
 			}
 		}
-		if(countSexy>1)
+		if(sexySet.size()>=4)
 		{
-			filterReason="包括色情被过滤，包含色情词的个数为 "+countSexy+"包含的色情词为  "+sexySb.toString();
+			String sexyWord=sexySet.toString();
+			filterReason="包括色情被过滤，包含色情词的个数为 "+sexySet.size()+"包含的色情词为  "+sexyWord;
 			return filterReason;
 		}
 		return filterReason;

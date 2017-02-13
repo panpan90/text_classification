@@ -23,7 +23,7 @@ public class JunkInformationProcessService {
 			judgeInfo.setReason(ruleFilterReason);
 			return judgeInfo;
 		}
-		ModelRealTimePredictService  modelRealTimePredictService=ModelRealTimePredictService.getInstance();
+		//ModelRealTimePredictService  modelRealTimePredictService=ModelRealTimePredictService.getInstance();
 		//String  modelFilterReason=modelRealTimePredictService.filterByModel(news,"sexyModelPath","adsModelPath");
 //		if(modelFilterReason!=null) //根据模型
 //		{
